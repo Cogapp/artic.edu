@@ -10,6 +10,7 @@
         $mediaItem = [
             'media' => $child->imageAsArray('image', 'desktop'),
             'label' => $child->input('label'),
+            'starting_view' => $child->checkbox('starting_view'),
         ];
 
         if ($child['type'] == 'layered_image_viewer_img') {
