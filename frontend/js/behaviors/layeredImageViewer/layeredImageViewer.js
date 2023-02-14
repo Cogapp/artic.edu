@@ -33,6 +33,7 @@ class LayeredImageViewer {
     this.overlays = {
       items: [],
       active: [],
+      default: [],
     };
     this.toolbar = {
       viewer: {
@@ -118,6 +119,15 @@ class LayeredImageViewer {
         itemState.label = imgEl.title;
       } else if (figureEl && figureEl.querySelector('figcaption')) {
         itemState.label = figureEl.querySelector('figcaption').innerText.trim();
+      }
+
+      // Set default active overlays
+      if (type === 'overlays') {
+        const overlayEl = imgEl.closest('.o-layered-image-viewer__overlay');
+
+        if (typeof overlayEl.dataset.activeOverlay !== 'undefined') {
+          this.overlays.default.push(i);
+        }
       }
 
       // Add ID for internal reference
@@ -273,6 +283,7 @@ class LayeredImageViewer {
     const overlayLabels = this.overlays.active.map((activeIndex) => {
       return `'${this.overlays.items[activeIndex].label}'`;
     });
+
     // 'b' label will only exist if initialised with multple images
     const imageLabels = [`'${this.images.items[this.images.active.a].label}'`];
     this.images.active.b !== null &&
@@ -380,6 +391,10 @@ class LayeredImageViewer {
     this.viewer.addHandler('open', () => {
       this._addControls();
 
+      // Assign initial active image layers
+      this.assignImageToLayer(0, 'a');
+      this.assignImageToLayer(1, 'b');
+
       // Set the start position if predefined
       this._setCropRegion();
 
@@ -397,6 +412,14 @@ class LayeredImageViewer {
         'aria-describedby',
         `layered-image-viewer-${this.id}-images-0`
       );
+
+      // Activate default overlays
+      const changeEvent = new Event('change');
+
+      this.overlays.default.forEach((index)=> {
+        this.overlays.items[index].checkboxEl.checked = true;
+        this.overlays.items[index].checkboxEl.dispatchEvent(changeEvent);
+      });
 
       // Add resizeObserver
       this._setViewerResizeObserver();
@@ -612,11 +635,11 @@ class LayeredImageViewer {
         this.viewer.viewport.goHome();
       }
 
-      // Deactivate overlays
+      // Set overlays to initial state
       // (Requires events to be dispatched manually to trigger)
       const changeEvent = new Event('change');
-      this.overlays.items.forEach((overlay) => {
-        overlay.checkboxEl.checked = false;
+      this.overlays.items.forEach((overlay, i) => {
+        overlay.checkboxEl.checked = this.overlays.default.includes(i);
         overlay.checkboxEl.dispatchEvent(changeEvent);
       });
 
@@ -787,9 +810,6 @@ class LayeredImageViewer {
           });
         });
       });
-
-      this.assignImageToLayer(0, 'a');
-      this.assignImageToLayer(1, 'b');
     }
 
     // Output overlays
@@ -1004,12 +1024,19 @@ class LayeredImageViewer {
   assignImageToLayer(index, layer) {
     if (!this.images.items[index]) return;
 
-    // Set active to null to prevent flip operations
-    this.images.active[layer] = null;
+    // Control elements only present for multiple images
+    if (this.images.items.length > 1) {
+      // Set active to null to prevent flip operations
+      this.images.active[layer] = null;
 
-    const changeEvent = new Event('change');
-    this.images.items[index].controlEls[layer].checked = true;
-    this.images.items[index].controlEls[layer].dispatchEvent(changeEvent);
+      const changeEvent = new Event('change');
+      this.images.items[index].controlEls[layer].checked = true;
+      this.images.items[index].controlEls[layer].dispatchEvent(changeEvent);
+    } else {
+      // Manually set layer for single image
+      this.images.active[layer] = index;
+    }
+
   }
 
   /**
@@ -1034,16 +1061,21 @@ class LayeredImageViewer {
       .cloneNode();
     cloneEl.id = `layered-image-viewer-${this.id}-overlays-${index}-clone`;
 
-    // Add to active list
-    this.overlays.active.push(index);
+    // May already be active (e.g. if on by default + reset)
+    if (!this.overlays.active.includes(index)) {
 
-    this.viewer.addOverlay({
-      element: cloneEl,
-      location: new OpenSeadragon.Point(0, 0),
-      width: 1, // (viewport unit)
-      index: index,
-      opacity: 0.4,
-    });
+      // Add to active list
+      this.overlays.active.push(index);
+
+      this.viewer.addOverlay({
+        element: cloneEl,
+        location: new OpenSeadragon.Point(0, 0),
+        width: 1, // (viewport unit)
+        index: index,
+        opacity: 0.4,
+      });
+    }
+
   }
 
   /**
