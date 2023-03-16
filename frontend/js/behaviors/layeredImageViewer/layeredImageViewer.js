@@ -14,13 +14,50 @@ class LayeredImageViewer {
         'Error: OpenSeadragon is required to run the layered image viewer'
       );
     }
+
+    // Prevent possibility of double init
+    if (viewerEl.layeredImageViewer) return;
+
     this.element = viewerEl;
+    this.element.layeredImageViewer = this;
     this.osdMountEl = null;
     this.browerSupportsFullscreen =
       typeof document.fullscreenElement !== 'undefined';
     this.size = this.element.dataset.size || 'm';
     this.aspect = 1;
     this.id = 0;
+
+    // Store how viewer should behave on first load
+    // (Needs to include all keys)
+    // Added to viewer instance when interactoin setter first runs
+    this.baseGestureSettings = {
+      mouse: {
+        dragToPan: true,
+        scrollToZoom: false,
+        clickToZoom: true,
+        dblClickToZoom: false,
+        dblClickDragToZoom: false,
+        pinchToZoom: false,
+        zoomToRefPoint: true,
+        flickEnabled: false,
+        flickMinSpeed: 120,
+        flickMomentum: 0.25,
+        pinchRotate: false,
+      },
+      touch: {
+        dragToPan: true,
+        scrollToZoom: false,
+        clickToZoom: false,
+        dblClickToZoom: true,
+        dblClickDragToZoom: true,
+        pinchToZoom: true,
+        zoomToRefPoint: true,
+        flickEnabled: true,
+        flickMinSpeed: 120,
+        flickMomentum: 0.25,
+        pinchRotate: false,
+      },
+    }
 
     this.captionTitleEl = null;
     this.captionEl = null;
@@ -47,9 +84,132 @@ class LayeredImageViewer {
     // Bind to store referenceable event handler with correct context set explictly
     // Could use arrow functions, but transpiler might interfere
     this.boundExitFullscreenHandler = this._exitFullscreenHandler.bind(this);
+    this.boundOsdEnableDefault = this._osdEnableDefault.bind(this);
+    this.boundHandleExternalClick = this._handleExternalClick.bind(this);
+    this.boundHandleClickInteraction = this._handleClickInteraction.bind(this);
+    this.boundHandlePointerEnterInteraction = this._handlePointerEnterInteraction.bind(this);
 
     this.setInitialState();
     this._initViewer();
+  }
+
+  /**
+   * Handler to use for OSD inner events when browser scrolling
+   * At time of writing this is required
+   * See: https://github.com/openseadragon/openseadragon/issues/2151
+   * @private
+   * @method
+   * @param {Event} e The event object
+   */
+  _osdEnableDefault(e) {
+    e.preventDefault = false;
+    e.preventDefaultAction = false;
+  }
+
+  /**
+   * Handle click / tap events that fire when interaction is enabled
+   * @private
+   * @method
+   * @param {Event} e The event object
+   */
+  _handleExternalClick(e) {
+    if (!this.viewer.element.contains(e.target)) {
+      this.interaction = false;
+      // Turn off tracking when scrolling is released to the browser
+      // Deciding for better or for worse that a stylus is more like a mouse than a finger
+      // Tracker should be halted only for touch, enabling drag by mouse
+      if (e.pointerType === 'touch') {
+        this.viewer.innerTracker.setTracking(false);
+      } else {
+        this.viewer.innerTracker.setTracking(true);
+      }
+    }
+  }
+
+  /**
+   * Handle click / tap interaction within the viewer area
+   * @private
+   * @method
+   */
+  _handleClickInteraction() {
+    this.interaction = true;
+    this.viewer.innerTracker.setTracking(true);
+  }
+
+  /**
+   * Handle any kind of pointer entering the viewer
+   * @private
+   * @method
+   * @param {Event} e The event object
+   */
+  _handlePointerEnterInteraction(e) {
+    // N.B. if we wanted to do more advanced handling that needed e.touches this would
+    // have to be called on a touch event
+    if (!this.interaction && e.pointerType === 'touch') {
+      // Stop tracking for touch to prevent warnings
+      this.viewer.innerTracker.setTracking(false);
+    }
+  }
+
+  /**
+   * Getter for _interaction
+   * @public
+   */
+  get interaction() {
+    return this._interaction;
+  }
+
+  /**
+   * Setter for _interaction
+   * @param {Boolean} value - New value for interaction
+   * @public
+   */
+  set interaction(value) {
+    // Either indicate touch-scroll will be captured or be released
+    this.viewer.container.style.touchAction = value
+      ? 'none'
+      : 'manipulation';
+    this.viewer.canvas.style.touchAction = value ? 'none' : 'manipulation';
+
+    // Release internal event tracking in OSD
+    this.viewer.addHandler(
+      'canvas-scroll',
+      this.boundOsdEnableDefault
+    );
+
+    // Set gestureSettings
+    // Spread operator not allowed, workaround:
+    Object.assign(this.viewer.gestureSettingsMouse, this.baseGestureSettings.mouse);
+    this.viewer.gestureSettingsMouse.scrollToZoom = this.isFullscreen && true;
+
+    Object.assign(this.viewer.gestureSettingsTouch, this.baseGestureSettings.touch);
+    if (value) {
+      this.viewer.gestureSettingsTouch.dragToPan = true;
+      this.viewer.gestureSettingsTouch.flickEnabled = true;
+    }
+
+    // Add or remove event listeners
+    // It's probably best to not remove these contingent on interaction,
+    // in case we need more logic inside the handler
+    this.viewer.element.addEventListener(
+      'click',
+      this.boundHandleClickInteraction,
+      true
+    );
+    this.viewer.element.
+      addEventListener('pointerenter', this.boundHandlePointerEnterInteraction, true);
+
+    // This can be removed contingent on interaction
+    ['click', 'touchend'].forEach((event) => {
+      document.body[value ? 'addEventListener' : 'removeEventListener'](
+        event,
+        this.boundHandleExternalClick,
+        true
+      );
+    })
+
+    // Complete property assignment
+    this._interaction = value;
   }
 
   /**
@@ -71,7 +231,6 @@ class LayeredImageViewer {
       );
     });
 
-    // Destroy removing viewer.element should mean no need to detach...
     this.viewerResizeObserver.observe(this.viewer.element);
   }
 
@@ -224,6 +383,9 @@ class LayeredImageViewer {
         this.toolbar.viewer.buttons.fullscreen.focus();
         document.addEventListener('keydown', this.boundExitFullscreenHandler);
       }
+      // This should be true already, but ensure full screen viewer
+      // has gestures matching post-interaction state
+      this.interaction = true;
       this.toolbar.viewer.buttons.fullscreen.ariaLabel = 'Exit';
     } else {
       // Exit fullscreen
@@ -255,6 +417,8 @@ class LayeredImageViewer {
           this.boundExitFullscreenHandler
         );
       }
+      // Revert gestures to pre-interaction state
+      this.interaction = false;
       this.toolbar.viewer.buttons.fullscreen.ariaLabel = 'Fullscreen';
     }
   }
@@ -440,6 +604,9 @@ class LayeredImageViewer {
 
       // Add resizeObserver
       this._setViewerResizeObserver();
+
+      // Force interaction setter function to fire
+      this.interaction = false;
     });
   }
 
@@ -451,20 +618,28 @@ class LayeredImageViewer {
    * @param {HTMLElement} viewerEl - Element which was used to initialise the viewer to be destroyed
    */
   static destroy(viewerEl) {
-    const osdMountEl = viewerEl.querySelector(
-      '.o-layered-image-viewer__osd-mount'
-    );
-    // Add elements we create here to be cleaned up
-    const fabricatedElements = [];
+    // Qualifying elements should have a layeredImageViewer stored inside
+    const instance = viewerEl.layeredImageViewer
 
-    if (osdMountEl) {
-      // Destroy OSD and remove elements added by this class
-      OpenSeadragon.getViewer(osdMountEl).destroy();
-      osdMountEl.closest('figure').remove();
-      fabricatedElements.forEach((fabricatedElement) => {
-        fabricatedElement.remove();
-      });
-    }
+    if (!instance) return;
+
+    // Stop observers
+    instance.viewerResizeObserver.disconnect();
+
+    // Destroy OSD and remove elements added by this class
+    instance.viewer.destroy();
+    viewerEl.querySelector('.o-layered-image-viewer__osd').remove();
+
+    // Cull events added outside the scope of the viewer
+    ['click', 'touchend'].forEach((event) => {
+      document.body.removeEventListener(
+        event,
+        instance.boundHandleExternalClick,
+        true
+      );
+    });
+
+    delete viewerEl.layeredImageViewer;
   }
 
   /**
