@@ -237,6 +237,7 @@ return [
         'timeline',
         'tour_stop',
         'video',
-        'vtour_embed'
+        'vtour_embed',
+        'tours_grid'
     ]
 ];
