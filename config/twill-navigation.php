@@ -58,6 +58,10 @@ $nav = [
                 'title' => 'Virtual Tours',
                 'module' => true,
             ],
+            'customToursLandingPageItems' => [
+                'title' => 'Custom Tours',
+                'module' => true,
+            ],
         ]
     ],
 
