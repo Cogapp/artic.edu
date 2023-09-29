@@ -47,3 +47,17 @@ jobs:
               run: npm run build
             - name: Run PHPUnit
               run: php artisan test --env=testing
+            - name: Install Postgres
+              id: postgres
+              uses: ikalnytskyi/action-setup-postgres@v4
+              with:
+               username: homestead
+               password: secret
+               database: testing
+               port: 5432
+            - name: Create Additional Database
+              run: |
+               createdb --owner homestead tours_db
+              env:
+               PGSERVICE: ${{ steps.postgres.outputs.service-name }}
+              shell: bash
