@@ -22,12 +22,6 @@ jobs:
                   password: secret
                   database: testing
                   port: 5432
-            - name: Create Additional Database
-              run: |
-                  createdb --owner homestead tours_db
-              env:
-                  PGSERVICE: ${{ steps.postgres.outputs.service-name }}
-              shell: bash
             - name: Install Prince
               run: |
                   TEMP_PRINCE="$(mktemp)"
@@ -53,3 +47,12 @@ jobs:
               run: npm run build
             - name: Run PHPUnit
               run: php artisan test --env=testing
+    test_tours:
+        runs-on: ubuntu-20.04
+        steps:
+          - name: Create Additional Database
+            run: |
+              createdb --owner homestead tours_db
+            env:
+              PGSERVICE: ${{ steps.postgres.outputs.service-name }}
+            shell: bash
