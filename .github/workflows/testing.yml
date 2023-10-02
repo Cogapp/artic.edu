@@ -50,9 +50,31 @@ jobs:
     test_tours:
         runs-on: ubuntu-20.04
         steps:
-          - name: Create Additional Database
+          - name: Install PHP
+            uses: shivammathur/setup-php@v2
+            with:
+              php-version: 8.1
+          - name: Install Node
+            uses: actions/setup-node@v3
+            with:
+              node-version: 8.10.0
+          - name: Install NPM
+            run: npm install --global npm@6.13
+          - name: Install Postgres
+            id: postgres
+            uses: ikalnytskyi/action-setup-postgres@v4
+            with:
+              username: homestead
+              password: secret
+              database: tours_db
+              port: 5432
+          - name: Install Prince
             run: |
-              createdb --owner homestead tours_db
-            env:
-              PGSERVICE: ${{ steps.postgres.outputs.service-name }}
-            shell: bash
+              TEMP_PRINCE="$(mktemp)"
+              sudo apt-get install gdebi -y
+              wget https://www.princexml.com/download/prince_15-1_ubuntu20.04_amd64.deb -O "${TEMP_PRINCE}"
+              sudo gdebi "${TEMP_PRINCE}" --n
+          - name: Checkout code
+            uses: actions/checkout@v3
+          - name: Install PHP dependencies
+            run: composer install --no-interaction --no-progress --no-scripts
