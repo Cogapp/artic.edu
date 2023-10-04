@@ -8,9 +8,9 @@ use A17\Twill\Repositories\Behaviors\HandleMedias;
 use A17\Twill\Repositories\Behaviors\HandleFiles;
 use A17\Twill\Repositories\Behaviors\HandleRevisions;
 use A17\Twill\Repositories\ModuleRepository;
-use App\Models\CustomToursLandingPageItem;
+use App\Models\CustomToursItem;
 
-class CustomToursLandingPageItemRepository extends ModuleRepository
+class CustomToursItemRepository extends ModuleRepository
 {
     use HandleBlocks;
     use HandleSlugs;
@@ -18,7 +18,7 @@ class CustomToursLandingPageItemRepository extends ModuleRepository
     use HandleFiles;
     use HandleRevisions;
 
-    public function __construct(CustomToursLandingPageItem $model)
+    public function __construct(CustomToursItem $model)
     {
         $this->model = $model;
     }
