@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\Request;
 class CustomTourAPITest extends BaseTestCase
 {
     /**
-     * A basic feature test example.
+     * A feature test to test the Custom Tours API POST and GET routes.
      */
-    public function testCreateCustomTour()
+    public function testCreateAndGetCustomTour()
     {
-//      $currentUrl = Request::url();
+        // Todo: Update the API routes to dynamically use the app url
+        // $currentUrl = Request::url();
         $currentUrl = 'https://artic.edu.ddev.site/';
 
-        // Define the JSON data to send to the API
+        // The JSON data to send to the API
         $data = [
             "title" => "Custom Tour",
             "description" => "Custom tour (optional) description",
@@ -42,9 +43,32 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $response = $this->json('POST', 'https://artic.edu.ddev.site/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', 'https://artic.edu.ddev.site/api/v1/custom-tours', $data);
 
         // Assert that the response has a status code of 201 (Created)
-        $response->assertStatus(201);
+        $postResponse->assertStatus(201);
+
+        // Send a GET request to the custom tours API route, using the id of the newly created Custom Tour
+        $getResponse = $this->json('GET', 'https://artic.edu.ddev.site/api/v1/custom-tours/1');
+
+        // Assert that the response has a status code of 200 (OK)
+        $getResponse->assertStatus(200);
+
+        // Assert that the response JSON has the expected structure
+        $getResponse->assertJsonStructure([
+            'tour_json' => [
+                'title',
+                'description',
+                'artworks',
+            ],
+        ]);
+
+        // Assert that the response JSON has the expected 'title'
+        $getResponse->assertJsonFragment(['title' => 'Custom Tour']);
+
+
+        // Assert that the response JSON has the same number of artworks as the original $data
+        $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
+
     }
 }
