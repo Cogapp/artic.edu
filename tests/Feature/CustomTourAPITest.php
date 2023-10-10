@@ -67,10 +67,10 @@ class CustomTourAPITest extends BaseTestCase
 
         // Assert that the response JSON has the same number of artworks as the original $data
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
-
     }
 
-    public function testCustomTourMissingTitleValidationFailure() {
+    public function testCustomTourMissingTitleValidationFailure()
+    {
         $currentUrl = getMainEnvAppUrl();
 
         // The JSON data to send to the API
@@ -104,10 +104,10 @@ class CustomTourAPITest extends BaseTestCase
 
         // Assert that the response has a status code of 422 (Can't Process)
         $postResponse->assertStatus(422);
-
     }
 
-    public function testCustomTourMissingArtworksValidationFailure() {
+    public function testCustomTourMissingArtworksValidationFailure()
+    {
         $currentUrl = getMainEnvAppUrl();
 
         // The JSON data to send to the API
@@ -122,10 +122,10 @@ class CustomTourAPITest extends BaseTestCase
 
         // Assert that the response has a status code of 422 (Can't Process)
         $postResponse->assertStatus(422);
-
     }
 
-    public function testCustomTourIncorrectTypeValidationFailure() {
+    public function testCustomTourIncorrectTypeValidationFailure()
+    {
         $currentUrl = getMainEnvAppUrl();
 
         // The JSON data to send to the API
@@ -147,7 +147,6 @@ class CustomTourAPITest extends BaseTestCase
 
         // Assert that the response has a status code of 422 (Can't Process)
         $postResponse->assertStatus(422);
-
     }
 }
 
