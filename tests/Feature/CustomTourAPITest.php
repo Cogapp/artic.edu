@@ -42,16 +42,16 @@ class CustomTourAPITest extends BaseTestCase
         // Send a POST request to the custom tours API route
         $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
 
-        // Assert that the response has a status code of 201 (Created)
+        // Check the response has a status code of 201
         $postResponse->assertStatus(201);
 
         // Send a GET request to the custom tours API route, using the id of the newly created Custom Tour
         $getResponse = $this->json('GET', $currentUrl . '/api/v1/custom-tours/1');
 
-        // Assert that the response has a status code of 200 (OK)
+        // Check the response has a status code of 200
         $getResponse->assertStatus(200);
 
-        // Assert that the response JSON has the expected structure
+        // Check that the response JSON has the expected structure
         $getResponse->assertJsonStructure([
             'tour_json' => [
                 'title',
@@ -60,15 +60,15 @@ class CustomTourAPITest extends BaseTestCase
             ],
         ]);
 
-        // Assert that the response JSON has the expected 'title'
+        // Check that the response JSON has the expected 'title'
         $getResponse->assertJsonFragment(['title' => 'Custom Tour']);
 
 
-        // Assert that the response JSON has the same number of artworks as the original $data
+        // Check that the response JSON has the same number of artworks as the original $data
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
     }
 
-    public function testCustomTourMissingTitleValidationFailure()
+    public function testCustomTourMissingTitleValidation()
     {
         $currentUrl = getMainEnvAppUrl();
 
@@ -101,11 +101,11 @@ class CustomTourAPITest extends BaseTestCase
         // Send a POST request to the custom tours API route
         $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
 
-        // Assert that the response has a status code of 422 (Can't Process)
+        // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
 
-    public function testCustomTourMissingArtworksValidationFailure()
+    public function testCustomTourMissingArtworksValidation()
     {
         $currentUrl = getMainEnvAppUrl();
 
@@ -119,11 +119,11 @@ class CustomTourAPITest extends BaseTestCase
         // Send a POST request to the custom tours API route
         $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
 
-        // Assert that the response has a status code of 422 (Can't Process)
+        // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
 
-    public function testCustomTourIncorrectTypeValidationFailure()
+    public function testCustomTourIncorrectTypeValidation()
     {
         $currentUrl = getMainEnvAppUrl();
 
@@ -144,7 +144,7 @@ class CustomTourAPITest extends BaseTestCase
         // Send a POST request to the custom tours API route
         $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
 
-        // Assert that the response has a status code of 422 (Can't Process)
+        // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
 }
