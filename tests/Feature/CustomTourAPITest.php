@@ -69,6 +69,86 @@ class CustomTourAPITest extends BaseTestCase
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
 
     }
+
+    public function testCustomTourMissingTitleValidationFailure() {
+        $currentUrl = getMainEnvAppUrl();
+
+        // The JSON data to send to the API
+        // Intentionally missing "title"
+        $data = [
+            "description" => "Custom tour (optional) description",
+            "artworks" => [
+                [
+                    "id" => 730796,
+                    "title" => "Artwork one",
+                    "objectNote" => "A short note."
+                ],
+                [
+                    "id" => 243516,
+                    "title" => "Artwork two"
+                ],
+                [
+                    "id" => 21023,
+                    "title" => "Artwork three",
+                    "objectNote" => "Third artwork note"
+                ],
+                [
+                    "id" => 99539,
+                    "title" => "Artwork four"
+                ]
+            ]
+        ];
+
+        // Send a POST request to the custom tours API route
+        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+
+        // Assert that the response has a status code of 422 (Can't Process)
+        $postResponse->assertStatus(422);
+
+    }
+
+    public function testCustomTourMissingArtworksValidationFailure() {
+        $currentUrl = getMainEnvAppUrl();
+
+        // The JSON data to send to the API
+        // Intentionally missing "artworks"
+        $data = [
+            "title" => "Custom Tour",
+            "description" => "Custom tour (optional) description",
+        ];
+
+        // Send a POST request to the custom tours API route
+        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+
+        // Assert that the response has a status code of 422 (Can't Process)
+        $postResponse->assertStatus(422);
+
+    }
+
+    public function testCustomTourIncorrectTypeValidationFailure() {
+        $currentUrl = getMainEnvAppUrl();
+
+        // The JSON data to send to the API
+        // Intentionally has an array as the artworks.title (only accepts a string)
+        $data = [
+            "title" => "Custom Tour",
+            "description" => "Custom tour (optional) description",
+            "artworks" => [
+                [
+                    "id" => 730796,
+                    "title" => ["Artwork one", "Artwork two", "Artwork three", "Artwork four"],
+                    "objectNote" => "A short note about the artworks."
+                ],
+            ]
+        ];
+
+        // Send a POST request to the custom tours API route
+        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+
+        // Assert that the response has a status code of 422 (Can't Process)
+        $postResponse->assertStatus(422);
+
+    }
 }
 
 /**
