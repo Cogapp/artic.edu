@@ -12,9 +12,7 @@ class CustomTourAPITest extends BaseTestCase
      */
     public function testCreateAndGetCustomTour()
     {
-        // Todo: Update the API routes to dynamically use the app url
-        // $currentUrl = Request::url();
-        $currentUrl = 'https://artic.edu.ddev.site/';
+        $currentUrl = getMainEnvAppUrl();
 
         // The JSON data to send to the API
         $data = [
@@ -43,13 +41,13 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $postResponse = $this->json('POST', 'https://artic.edu.ddev.site/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
 
         // Assert that the response has a status code of 201 (Created)
         $postResponse->assertStatus(201);
 
         // Send a GET request to the custom tours API route, using the id of the newly created Custom Tour
-        $getResponse = $this->json('GET', 'https://artic.edu.ddev.site/api/v1/custom-tours/1');
+        $getResponse = $this->json('GET', $currentUrl . '/api/v1/custom-tours/1');
 
         // Assert that the response has a status code of 200 (OK)
         $getResponse->assertStatus(200);
@@ -71,4 +69,20 @@ class CustomTourAPITest extends BaseTestCase
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
 
     }
+}
+
+/**
+ * Get APP_URL from the main .env, as opposed to .env.testing
+ *
+ * This method uses preg_match to search .env for the APP_URL and return it
+ * without the wrapping quote marks
+ *
+ */
+function getMainEnvAppUrl(): string
+{
+    $envFilePath = base_path('.env');
+    $envContent = file_get_contents($envFilePath);
+    preg_match('/APP_URL=(.*)/', $envContent, $matches);
+
+    return trim($matches[1] ?? null, '"');
 }
