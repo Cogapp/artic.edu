@@ -40,7 +40,7 @@ class CustomTourAPITest extends BaseTestCase
         $customTour = new CustomTour();
         $customTour->tour_json = $tourData;
 
-        $this->addMockApiResponses($this->mockApiModelReponse($customTour,201));
+        $this->addMockApiResponses($this->mockApiModelReponse($customTour, 201));
 
         $postResponse = $this->post(route('custom-tours-api.store'), $customTour->toArray());
 
