@@ -15,7 +15,7 @@ class CustomTourAPITest extends BaseTestCase
     /**
      * A feature test to test the Custom Tours API POST and GET routes.
      */
-    public function testCreateAndGetCustomTour()
+    public function test_create_and_get_custom_tour()
     {
 
         $tourData = [
