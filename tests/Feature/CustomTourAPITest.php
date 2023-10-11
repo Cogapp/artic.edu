@@ -9,7 +9,7 @@ class CustomTourAPITest extends BaseTestCase
     /**
      * A feature test to test the Custom Tours API POST and GET routes.
      */
-    public function testCreateAndGetCustomTour()
+    public function test_create_and_get_custom_tour()
     {
         $url = config('app.url');
 
@@ -69,7 +69,7 @@ class CustomTourAPITest extends BaseTestCase
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
     }
 
-    public function testCustomTourMissingTitleValidation()
+    public function test_custom_tour_missing_title_validation()
     {
         // The JSON data to send to the API
         // Intentionally missing "title"
@@ -104,7 +104,7 @@ class CustomTourAPITest extends BaseTestCase
         $postResponse->assertStatus(422);
     }
 
-    public function testCustomTourMissingArtworksValidation()
+    public function test_custom_tour_missing_artworks_validation()
     {
         // The JSON data to send to the API
         // Intentionally missing "artworks"
@@ -120,7 +120,7 @@ class CustomTourAPITest extends BaseTestCase
         $postResponse->assertStatus(422);
     }
 
-    public function testCustomTourIncorrectTypeValidation()
+    public function test_custom_tour_incorrect_type_validation()
     {
         // The JSON data to send to the API
         // Intentionally has an array as the artworks.title (only accepts a string)
