@@ -11,8 +11,9 @@ class CustomTourAPITest extends BaseTestCase
      */
     public function testCreateAndGetCustomTour()
     {
-        $currentUrl = getMainEnvAppUrl();
+        $url = config('app.url');
 
+        $blah = 1;
         // The JSON data to send to the API
         $data = [
             "title" => "Custom Tour",
@@ -40,13 +41,13 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check the response has a status code of 201
         $postResponse->assertStatus(201);
 
         // Send a GET request to the custom tours API route, using the id of the newly created Custom Tour
-        $getResponse = $this->json('GET', $currentUrl . '/api/v1/custom-tours/1');
+        $getResponse = $this->json('GET', 'https://' . config('app.url') . '/api/v1/custom-tours/1');
 
         // Check the response has a status code of 200
         $getResponse->assertStatus(200);
@@ -70,8 +71,6 @@ class CustomTourAPITest extends BaseTestCase
 
     public function testCustomTourMissingTitleValidation()
     {
-        $currentUrl = getMainEnvAppUrl();
-
         // The JSON data to send to the API
         // Intentionally missing "title"
         $data = [
@@ -99,7 +98,7 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
@@ -107,8 +106,6 @@ class CustomTourAPITest extends BaseTestCase
 
     public function testCustomTourMissingArtworksValidation()
     {
-        $currentUrl = getMainEnvAppUrl();
-
         // The JSON data to send to the API
         // Intentionally missing "artworks"
         $data = [
@@ -117,7 +114,7 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
@@ -125,8 +122,6 @@ class CustomTourAPITest extends BaseTestCase
 
     public function testCustomTourIncorrectTypeValidation()
     {
-        $currentUrl = getMainEnvAppUrl();
-
         // The JSON data to send to the API
         // Intentionally has an array as the artworks.title (only accepts a string)
         $data = [
@@ -142,25 +137,9 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
-        $postResponse = $this->json('POST', $currentUrl . '/api/v1/custom-tours', $data);
+        $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
-}
-
-/**
- * Get APP_URL from the main .env, as opposed to .env.testing
- *
- * This method uses preg_match to search .env for the APP_URL and return it
- * without the wrapping quote marks
- *
- */
-function getMainEnvAppUrl(): string
-{
-    $envFilePath = base_path('.env');
-    $envContent = file_get_contents($envFilePath);
-    preg_match('/APP_URL=(.*)/', $envContent, $matches);
-
-    return trim($matches[1] ?? null, '"');
 }
