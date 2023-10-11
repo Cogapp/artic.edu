@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Api;
 
+use App\Libraries\Api\Models\BaseApiModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomTour extends Model
+class CustomTour extends BaseApiModel
 {
     protected $connection;
 
