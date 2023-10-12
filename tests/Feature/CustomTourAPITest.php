@@ -11,9 +11,6 @@ class CustomTourAPITest extends BaseTestCase
      */
     public function test_create_and_get_custom_tour()
     {
-        $url = config('app.url');
-
-        $blah = 1;
         // The JSON data to send to the API
         $data = [
             "title" => "Custom Tour",
