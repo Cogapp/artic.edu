@@ -36,10 +36,8 @@ class CustomTourAPITest extends BaseTestCase
 
         $this->addMockApiResponses($this->mockApiModelReponse($customTour, 201));
 
-        // Note: Unable to use route() here as APP_URL doesn't have protocol
         $postResponse = $this->postJson(route('custom-tours-api.store'), json_decode($customTour->tour_json, true));
-
-
+        
         // Check the response has a status code of 201
         $postResponse->assertStatus(201);
     }
