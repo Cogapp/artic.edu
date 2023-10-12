@@ -24,25 +24,19 @@ class CustomTourAPITest extends BaseTestCase
             "artworks" => [
                 [
                     "id" => 656,
-                    "image_id" => "6b1edb9c-0f3f-0ee3-47c7-ca25c39ee360",
                     "title" => "Lion (One of a Pair, South Pedestal)",
-                    "description" => "Object description",
-                    "artist" => "Artist name",
-                    "date" => "1888",
-                    "gallery_title" => "Michigan Avenue entrance/steps",
-                    "latitude" => null,
-                    "longitude" => null,
                     "objectNote" => "note about the lion",
                 ],
             ],
         ];
 
         $customTour = new CustomTour();
-        $customTour->tour_json = $tourData;
+        $customTour->tour_json = json_encode($tourData);
 
         $this->addMockApiResponses($this->mockApiModelReponse($customTour, 201));
 
-        $postResponse = $this->post(route('custom-tours-api.store'), $customTour->toArray());
+        // Note: Unable to use route() here as APP_URL doesn't have protocol
+        $postResponse = $this->post('https://' . config('app.url') . '/api/v1/custom-tours', json_decode($customTour->tour_json, true));
 
         // Check the response has a status code of 201
         $postResponse->assertStatus(201);

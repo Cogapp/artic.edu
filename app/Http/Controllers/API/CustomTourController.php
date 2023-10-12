@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\CustomTourRequest;
-use App\Models\CustomTour;
+use App\Models\Api\CustomTour;
 use Illuminate\Http\Request;
 
 class CustomTourController extends BaseController
