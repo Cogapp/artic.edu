@@ -41,13 +41,15 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
+        // Note: Unable to use route() here as APP_URL doesn't have a protocol
         $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check the response has a status code of 201
         $postResponse->assertStatus(201);
 
         // Send a GET request to the custom tours API route, using the id of the newly created Custom Tour
-        $getResponse = $this->json('GET', 'https://' . config('app.url') . '/api/v1/custom-tours/1');
+        $getResponse = $this->json('GET', route('custom-tours-api.show', ['id' => 1]));
+
 
         // Check the response has a status code of 200
         $getResponse->assertStatus(200);
@@ -69,6 +71,10 @@ class CustomTourAPITest extends BaseTestCase
         $getResponse->assertJsonCount(count($data['artworks']), 'tour_json.artworks');
     }
 
+    /**
+     * A feature test to test the Custom Tours validation rules
+     * (title is required).
+     */
     public function test_custom_tour_missing_title_validation()
     {
         // The JSON data to send to the API
@@ -98,12 +104,17 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
+        // Note: Unable to use route() here as APP_URL doesn't have a protocol
         $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
 
+    /**
+     * A feature test to test the Custom Tours validation rules
+     * (artworks are required).
+     */
     public function test_custom_tour_missing_artworks_validation()
     {
         // The JSON data to send to the API
@@ -114,12 +125,17 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
+        // Note: Unable to use route() here as APP_URL doesn't have a protocol
         $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
         $postResponse->assertStatus(422);
     }
 
+    /**
+     * A feature test to test the Custom Tours validation rules
+     * (artwork title must be string).
+     */
     public function test_custom_tour_incorrect_type_validation()
     {
         // The JSON data to send to the API
@@ -137,6 +153,7 @@ class CustomTourAPITest extends BaseTestCase
         ];
 
         // Send a POST request to the custom tours API route
+        // Note: Unable to use route() here as APP_URL doesn't have a protocol
         $postResponse = $this->json('POST', 'https://' . config('app.url') . '/api/v1/custom-tours', $data);
 
         // Check that the response has a status code of 422
