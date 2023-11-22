@@ -75,6 +75,18 @@ class LandingPage extends AbstractModel implements Sortable
         'hour_subheader',
         'labels',
         'active',
+
+        // Pre-made Tours
+        'tours_create_cta_module_image',
+        'tours_create_cta_module_action_url',
+        'tours_create_cta_module_header',
+        'tours_create_cta_module_button_text',
+        'tours_create_cta_module_body',
+        'tours_tickets_cta_module_image',
+        'tours_tickets_cta_module_action_url',
+        'tours_tickets_cta_module_header',
+        'tours_tickets_cta_module_button_text',
+        'tours_tickets_cta_module_body',
     ];
 
     protected $appends = [
