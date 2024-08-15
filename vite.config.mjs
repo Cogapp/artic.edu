@@ -18,6 +18,7 @@ export default defineConfig({
         // path.resolve(__dirname, 'frontend/js/interactiveFeatures.js'),
         path.resolve(__dirname, 'frontend/js/layeredImageViewer.js'),
         path.resolve(__dirname, 'frontend/js/mirador.js'),
+        path.resolve(__dirname, 'frontend/js/myMuseumTourBuilder.js'),
         path.resolve(__dirname, 'frontend/js/recaptcha.js'),
         path.resolve(__dirname, 'frontend/js/videojs.js'),
         path.resolve(__dirname, 'frontend/js/virtualTour.js'),
