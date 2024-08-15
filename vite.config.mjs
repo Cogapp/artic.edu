@@ -9,13 +9,12 @@ export default defineConfig({
     rollupOptions: {
       treeshake: false,
       input: [
-
         path.resolve(__dirname, 'frontend/js/app.js'),
         path.resolve(__dirname, 'frontend/js/blocks3D.js'),
         path.resolve(__dirname, 'frontend/js/blocks360.js'),
         path.resolve(__dirname, 'frontend/js/collectionSearch.js'),
         path.resolve(__dirname, 'frontend/js/head.js'),
-        // path.resolve(__dirname, 'frontend/js/interactiveFeatures.js'),
+        path.resolve(__dirname, 'frontend/js/interactiveFeatures.js'),
         path.resolve(__dirname, 'frontend/js/layeredImageViewer.js'),
         path.resolve(__dirname, 'frontend/js/mirador.js'),
         path.resolve(__dirname, 'frontend/js/myMuseumTourBuilder.js'),
