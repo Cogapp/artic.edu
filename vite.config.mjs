@@ -11,7 +11,7 @@ export default defineConfig({
       input: [
 
         path.resolve(__dirname, 'frontend/js/app.js'),
-        // path.resolve(__dirname, 'frontend/js/blocks3D.js'),
+        path.resolve(__dirname, 'frontend/js/blocks3D.js'),
         path.resolve(__dirname, 'frontend/js/blocks360.js'),
         path.resolve(__dirname, 'frontend/js/collectionSearch.js'),
         path.resolve(__dirname, 'frontend/js/head.js'),
