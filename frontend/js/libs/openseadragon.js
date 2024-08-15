@@ -698,7 +698,7 @@
   */
 
 
-export default function OpenSeadragon( options ){
+function OpenSeadragon( options ){
     return new OpenSeadragon.Viewer( options );
 }
 
