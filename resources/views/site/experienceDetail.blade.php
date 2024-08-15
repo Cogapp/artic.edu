@@ -41,5 +41,5 @@
 @endsection
 
 @section('extra_scripts')
-    <script src="{{FrontendHelpers::revAsset('scripts/interactiveFeatures.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/interactiveFeatures.js')}}"></script>
 @endsection

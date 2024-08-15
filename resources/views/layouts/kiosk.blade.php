@@ -71,6 +71,6 @@
   </main>
 </div>
 
-<script src="{{FrontendHelpers::revAsset('scripts/interactiveFeatures.js')}}"></script>
+<script type="module" src="{{FrontendHelpers::revAsset('scripts/interactiveFeatures.js')}}"></script>
 </body>
 </html>

@@ -243,5 +243,5 @@
 @endsection
 
 @section('extra_scripts')
-    <script src="{{FrontendHelpers::revAsset('scripts/collectionSearch.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/collectionSearch.js')}}"></script>
 @endsection

@@ -114,5 +114,5 @@
 
 @section('extra_scripts')
     <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script src="{{FrontendHelpers::revAsset('scripts/recaptcha.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/recaptcha.js')}}"></script>
 @endsection

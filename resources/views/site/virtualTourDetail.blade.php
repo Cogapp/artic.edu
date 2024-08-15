@@ -58,7 +58,7 @@
 @endsection
 
 @section('extra_scripts')
-    <script src="{{FrontendHelpers::revAsset('scripts/virtualTour.js')}}"></script>
-    <script src="/virtual-tours/tour.js"></script>
-    <script src="{{FrontendHelpers::revAsset('scripts/videojs.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/virtualTour.js')}}"></script>
+    <script type="module" src="/virtual-tours/tour.js"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/videojs.js')}}"></script>
 @endsection

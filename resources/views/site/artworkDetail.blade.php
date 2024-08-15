@@ -112,7 +112,7 @@
       <div class="o-article__related{{ (empty($item->description) or $item->description === '') ? ' o-article__related--no-description' : '' }}">
         @component('site.shared._loadRelatedSidebar')
             @slot('item', $item)
-        @endcomponent      
+        @endcomponent
     </div>
   @endif
 
@@ -167,6 +167,6 @@
 @endsection
 
 @section('extra_scripts')
-    <script src="{{FrontendHelpers::revAsset('scripts/blocks360.js')}}"></script>
-    <script src="{{FrontendHelpers::revAsset('scripts/mirador.js')}}"></script>
+    <script type="moudule" src="{{FrontendHelpers::revAsset('scripts/blocks360.js')}}"></script>
+    <script type="moudule" src="{{FrontendHelpers::revAsset('scripts/mirador.js')}}"></script>
 @endsection
