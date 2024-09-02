@@ -167,6 +167,6 @@
 @endsection
 
 @section('extra_scripts')
-    <script type="moudule" src="{{FrontendHelpers::revAsset('scripts/blocks360.js')}}"></script>
-    <script type="moudule" src="{{FrontendHelpers::revAsset('scripts/mirador.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/blocks360.js')}}"></script>
+    <script type="module" src="{{FrontendHelpers::revAsset('scripts/mirador.js')}}"></script>
 @endsection
