@@ -21,24 +21,11 @@ export default defineConfig({
         path.resolve(__dirname, 'frontend/js/recaptcha.js'),
         path.resolve(__dirname, 'frontend/js/videojs.js'),
         path.resolve(__dirname, 'frontend/js/virtualTour.js'),
-        path.resolve(__dirname, 'frontend/scss/app.scss'),
-        path.resolve(__dirname, 'frontend/scss/html4css.scss'),
-        path.resolve(__dirname, 'frontend/scss/mirador-kiosk.scss'),
-        path.resolve(__dirname, 'frontend/scss/my-museum-tour-pdf.scss'),
-        path.resolve(__dirname, 'frontend/scss/print.scss'),
-        path.resolve(__dirname, 'frontend/scss/setup.scss'),
       ],
       output: {
-        dir: 'public/dist',
-        entryFileNames: 'scripts/[name].js',
-        chunkFileNames: 'scripts/[name].js',
-        assetFileNames: ({ name }) => {
-          if (name.endsWith('.css')) {
-            return 'styles/[name].[ext]';
-          }
-
-          return 'scripts/[name].[ext]';
-        },
+        dir: 'public/dist/scripts',
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
       },
     },
   },
@@ -51,9 +38,10 @@ export default defineConfig({
     commonjs({
       exclude: 'node_modules/**',
     }),
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled'
-    }),
+    // TODO: Determine if needed
+    // babel({
+    //   exclude: 'node_modules/**',
+    //   babelHelpers: 'bundled'
+    // }),
   ],
 });
