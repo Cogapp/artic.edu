@@ -6,6 +6,7 @@ import path from 'path';
 export default defineConfig({
   build: {
     target: 'modules',
+    copyPublicDir: false,
     rollupOptions: {
       treeshake: false,
       input: [
