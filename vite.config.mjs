@@ -3,10 +3,13 @@ import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 import path from 'path';
 
+// See: https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    // Default is 'modules', but it is recommended to specify anyway
     target: 'modules',
     copyPublicDir: false,
+    // See: https://rollupjs.org/configuration-options/
     rollupOptions: {
       treeshake: false,
       input: [
@@ -34,12 +37,13 @@ export default defineConfig({
   plugins: [
     // CommonJS was necesseary to wrap imports that were not
     // ESM compliant (i.e. didn't have any export e.g. openseadragon).
-    // A more verbose (but not always practical) solution
+    // A better (but not always practical) solution
     // for this issue would be to always use ESM.
     commonjs({
       exclude: 'node_modules/**',
     }),
     // TODO: Determine if needed
+    // May not be needed as transpiling is done by Vite/esbuild
     // babel({
     //   exclude: 'node_modules/**',
     //   babelHelpers: 'bundled'
