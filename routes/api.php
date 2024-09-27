@@ -193,6 +193,6 @@ Route::group(['prefix' => 'v1'], function () {
     /**
      * Custom Tours --------------------------------------------------------------------
      */
-    Route::get('custom-tours/{id}', [CustomTourController::class, 'show']);
-    Route::post('custom-tours', [CustomTourController::class, 'store']);
+    Route::get('custom-tours/{id}', [CustomTourController::class, 'show'])->name('custom-tours-api.show');
+    Route::post('custom-tours', [CustomTourController::class, 'store'])->name('custom-tours-api.store');
 });
